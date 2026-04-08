@@ -3,23 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 const SUPABASE_URL = 'https://yfaccxjykhhyuftwnzrx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmYWNjeGp5a2hoeXVmdHduenJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NzAzNjAsImV4cCI6MjA5MTE0NjM2MH0.Bc1EGtPp-uchD852G85r-4w-CQftPLrCDM_vNEoVjmU';
 
-async function supabaseQuery(table, method, body = null, filters = '') {
-  const url = SUPABASE_URL + '/rest/v1/' + table + filters;
-  const options = {
-    method,
-    headers: {
-      'apikey': SUPABASE_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_KEY,
-      'Content-Type': 'application/json',
-      'Prefer': method === 'POST' ? 'return=representation' : ''
-    }
-  };
-  if (body) options.body = JSON.stringify(body);
-  const res = await fetch(url, options);
-  return res.json();
-}
-
-export default function ChatInterface({ user }) {
+export default function ChatInterface({ user, session }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,7 +14,35 @@ export default function ChatInterface({ user }) {
   const [sidebarView, setSidebarView] = useState('projects');
   const messagesEndRef = useRef(null);
 
-  useEffect(() => { if (user) fetchProjects(); }, [user]);
+  // Get the auth token from session
+  const getAuthToken = () => {
+    return session?.access_token || SUPABASE_KEY;
+  };
+
+  // Supabase query helper with auth
+  const supabaseQuery = async (table, method, body = null, filters = '') => {
+    const url = SUPABASE_URL + '/rest/v1/' + table + filters;
+    const token = getAuthToken();
+    const options = {
+      method,
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+        'Prefer': method === 'POST' ? 'return=representation' : ''
+      }
+    };
+    if (body) options.body = JSON.stringify(body);
+    try {
+      const res = await fetch(url, options);
+      return res.json();
+    } catch (err) {
+      console.error('Supabase error:', err);
+      return [];
+    }
+  };
+
+  useEffect(() => { if (user && session) fetchProjects(); }, [user, session]);
   useEffect(() => { if (currentProject) fetchMessages(currentProject.id); else setMessages([]); }, [currentProject]);
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
@@ -45,7 +57,7 @@ export default function ChatInterface({ user }) {
   };
 
   const createProject = async () => {
-    if (!newProjectName.trim()) return;
+    if (!newProjectName.trim() || !user) return;
     const data = await supabaseQuery('projects', 'POST', { user_id: user.id, name: newProjectName, icon: '📁' });
     if (data && data[0]) {
       setProjects([data[0], ...projects]);
