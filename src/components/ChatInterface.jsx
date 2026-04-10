@@ -14,12 +14,10 @@ export default function ChatInterface({ user, session }) {
   const [sidebarView, setSidebarView] = useState('projects');
   const messagesEndRef = useRef(null);
 
-  // Get the auth token from session
   const getAuthToken = () => {
     return session?.access_token || SUPABASE_KEY;
   };
 
-  // Supabase query helper with auth
   const supabaseQuery = async (table, method, body = null, filters = '') => {
     const url = SUPABASE_URL + '/rest/v1/' + table + filters;
     const token = getAuthToken();
@@ -58,7 +56,7 @@ export default function ChatInterface({ user, session }) {
 
   const createProject = async () => {
     if (!newProjectName.trim() || !user) return;
-    const data = await supabaseQuery('projects', 'POST', { user_id: user.id, name: newProjectName, icon: '📁' });
+    const data = await supabaseQuery('projects', 'POST', { user_id: user.id, name: newProjectName, icon: '🌅' });
     if (data && data[0]) {
       setProjects([data[0], ...projects]);
       setCurrentProject(data[0]);
@@ -99,7 +97,7 @@ export default function ChatInterface({ user, session }) {
     <div style={{ display: 'flex', height: '100vh', background: '#0a0f1a' }}>
       <div style={{ width: '280px', background: '#0d1321', borderRight: '1px solid #1e293b', display: 'flex', flexDirection: 'column' }}>
         <div style={{ padding: '20px', borderBottom: '1px solid #1e293b' }}>
-          <h1 style={{ color: '#fff', fontSize: '20px', margin: 0 }}>⚡ AutoPilot AI</h1>
+          <h1 style={{ color: '#fff', fontSize: '20px', margin: 0 }}>🌅 Sunset ARC</h1>
         </div>
         <div style={{ display: 'flex', borderBottom: '1px solid #1e293b' }}>
           <button onClick={() => setSidebarView('chat')} style={{ flex: 1, padding: '12px', background: sidebarView === 'chat' ? '#1e293b' : 'transparent', border: 'none', color: sidebarView === 'chat' ? '#fff' : '#64748b', cursor: 'pointer' }}>💬 Chat</button>
@@ -108,7 +106,7 @@ export default function ChatInterface({ user, session }) {
         <div style={{ flex: 1, overflow: 'auto', padding: '12px' }}>
           {sidebarView === 'projects' ? (
             <>
-              <button onClick={() => setShowProjectModal(true)} style={{ width: '100%', padding: '12px', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', border: 'none', borderRadius: '8px', color: '#fff', cursor: 'pointer', marginBottom: '12px', fontWeight: '500' }}>+ New Project</button>
+              <button onClick={() => setShowProjectModal(true)} style={{ width: '100%', padding: '12px', background: 'linear-gradient(135deg, #f97316, #ea580c)', border: 'none', borderRadius: '8px', color: '#fff', cursor: 'pointer', marginBottom: '12px', fontWeight: '500' }}>+ New Project</button>
               {projects.map(project => (
                 <div key={project.id} onClick={() => { setCurrentProject(project); setSidebarView('chat'); }} style={{ padding: '12px', background: currentProject?.id === project.id ? '#1e293b' : 'transparent', borderRadius: '8px', cursor: 'pointer', marginBottom: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
@@ -128,7 +126,7 @@ export default function ChatInterface({ user, session }) {
           ) : (
             <div style={{ padding: '20px', textAlign: 'center', color: '#64748b' }}>
               <p>Select a project first</p>
-              <button onClick={() => setSidebarView('projects')} style={{ marginTop: '12px', padding: '8px 16px', background: '#3b82f6', border: 'none', borderRadius: '6px', color: '#fff', cursor: 'pointer' }}>View Projects</button>
+              <button onClick={() => setSidebarView('projects')} style={{ marginTop: '12px', padding: '8px 16px', background: '#f97316', border: 'none', borderRadius: '6px', color: '#fff', cursor: 'pointer' }}>View Projects</button>
             </div>
           )}
         </div>
@@ -136,20 +134,20 @@ export default function ChatInterface({ user, session }) {
       </div>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ padding: '16px 24px', borderBottom: '1px solid #1e293b', background: '#0d1321' }}>
-          <h2 style={{ color: '#fff', margin: 0, fontSize: '16px' }}>{currentProject ? currentProject.icon + ' ' + currentProject.name : 'AutoPilot AI'}</h2>
+          <h2 style={{ color: '#fff', margin: 0, fontSize: '16px' }}>{currentProject ? currentProject.icon + ' ' + currentProject.name : 'Sunset ARC'}</h2>
           {currentProject && <p style={{ color: '#64748b', margin: '4px 0 0', fontSize: '13px' }}>Conversation history is saved</p>}
         </div>
         <div style={{ flex: 1, overflow: 'auto', padding: '24px' }}>
           {messages.length === 0 && (
             <div style={{ textAlign: 'center', marginTop: '60px' }}>
-              <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚡</div>
-              <h3 style={{ color: '#fff', marginBottom: '8px' }}>{currentProject ? 'Welcome to ' + currentProject.name : 'Welcome to AutoPilot AI'}</h3>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>🌅</div>
+              <h3 style={{ color: '#fff', marginBottom: '8px' }}>{currentProject ? 'Welcome to ' + currentProject.name : 'Welcome to Sunset ARC'}</h3>
               <p style={{ color: '#64748b' }}>{currentProject ? 'I remember our conversation!' : 'Select or create a project.'}</p>
             </div>
           )}
           {messages.map((msg, i) => (
             <div key={i} style={{ marginBottom: '16px', display: 'flex', flexDirection: 'column', alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
-              <div style={{ maxWidth: '80%', padding: '12px 16px', borderRadius: '12px', background: msg.role === 'user' ? '#3b82f6' : '#1e293b', color: '#fff' }}>{msg.content}</div>
+              <div style={{ maxWidth: '80%', padding: '12px 16px', borderRadius: '12px', background: msg.role === 'user' ? '#f97316' : '#1e293b', color: '#fff' }}>{msg.content}</div>
               {msg.toolsExecuted?.length > 0 && (
                 <div style={{ marginTop: '8px', padding: '8px 12px', background: '#064e3b', borderRadius: '8px', fontSize: '13px' }}>
                   {msg.toolsExecuted.map((tool, j) => <div key={j} style={{ color: '#10b981' }}>{tool.details}</div>)}
@@ -162,8 +160,8 @@ export default function ChatInterface({ user, session }) {
         </div>
         <form onSubmit={sendMessage} style={{ padding: '16px 24px', borderTop: '1px solid #1e293b', background: '#0d1321' }}>
           <div style={{ display: 'flex', gap: '12px' }}>
-            <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder={currentProject ? "Message AutoPilot..." : "Select a project first..."} disabled={loading || !currentProject} style={{ flex: 1, padding: '12px 16px', background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', color: '#fff', fontSize: '14px', outline: 'none' }} />
-            <button type="submit" disabled={loading || !input.trim() || !currentProject} style={{ padding: '12px 24px', background: loading ? '#334155' : '#3b82f6', border: 'none', borderRadius: '8px', color: '#fff', cursor: 'pointer', fontWeight: '500' }}>{loading ? '...' : 'Send'}</button>
+            <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder={currentProject ? "Message Sunset ARC..." : "Select a project first..."} disabled={loading || !currentProject} style={{ flex: 1, padding: '12px 16px', background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', color: '#fff', fontSize: '14px', outline: 'none' }} />
+            <button type="submit" disabled={loading || !input.trim() || !currentProject} style={{ padding: '12px 24px', background: loading ? '#334155' : '#f97316', border: 'none', borderRadius: '8px', color: '#fff', cursor: 'pointer', fontWeight: '500' }}>{loading ? '...' : 'Send'}</button>
           </div>
         </form>
       </div>
@@ -174,7 +172,7 @@ export default function ChatInterface({ user, session }) {
             <input type="text" value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)} placeholder="Project name..." autoFocus style={{ width: '100%', padding: '12px', background: '#0d1321', border: '1px solid #334155', borderRadius: '8px', color: '#fff', marginBottom: '16px', boxSizing: 'border-box' }} onKeyPress={(e) => e.key === 'Enter' && createProject()} />
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
               <button onClick={() => setShowProjectModal(false)} style={{ padding: '10px 20px', background: 'transparent', border: '1px solid #334155', borderRadius: '6px', color: '#fff', cursor: 'pointer' }}>Cancel</button>
-              <button onClick={createProject} style={{ padding: '10px 20px', background: '#3b82f6', border: 'none', borderRadius: '6px', color: '#fff', cursor: 'pointer' }}>Create</button>
+              <button onClick={createProject} style={{ padding: '10px 20px', background: '#f97316', border: 'none', borderRadius: '6px', color: '#fff', cursor: 'pointer' }}>Create</button>
             </div>
           </div>
         </div>
