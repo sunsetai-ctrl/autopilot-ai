@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const SUPABASE_URL = 'https://yfaccxjykhhyuftwnzrx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmYWNjeGp5a2hoeXVmdHduenJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NzAzNjAsImV4cCI6MjA5MTE0NjM2MH0.Bc1EGtPp-uchD852G85r-4w-CQftPLrCDM_vNEoVjmU';
@@ -105,7 +105,7 @@ export default function ChatInterface({ user, session }) {
         </div>
         <div style={{ flex: 1, overflow: 'auto', padding: '12px' }}>
           {sidebarView === 'projects' ? (
-            <>
+            <React.Fragment>
               <button onClick={() => setShowProjectModal(true)} style={{ width: '100%', padding: '12px', background: 'linear-gradient(135deg, #f97316, #ea580c)', border: 'none', borderRadius: '8px', color: '#fff', cursor: 'pointer', marginBottom: '12px', fontWeight: '500' }}>+ New Project</button>
               {projects.map(project => (
                 <div key={project.id} onClick={() => { setCurrentProject(project); setSidebarView('chat'); }} style={{ padding: '12px', background: currentProject?.id === project.id ? '#1e293b' : 'transparent', borderRadius: '8px', cursor: 'pointer', marginBottom: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -117,7 +117,7 @@ export default function ChatInterface({ user, session }) {
                 </div>
               ))}
               {projects.length === 0 && <p style={{ color: '#64748b', textAlign: 'center', marginTop: '20px' }}>No projects yet!</p>}
-            </>
+            </React.Fragment>
           ) : currentProject ? (
             <div style={{ padding: '12px', background: '#1e293b', borderRadius: '8px' }}>
               <div style={{ color: '#fff', fontSize: '14px', fontWeight: '500' }}>{currentProject.icon} {currentProject.name}</div>
